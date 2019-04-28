@@ -1,0 +1,62 @@
+.main {
+    position: relative;
+    background: SandyBrown;
+    width: 500px;
+    height: 500px;
+}
+
+.layer {
+    --width: 50px;
+
+    position: absolute;
+    border-radius: 50%;
+    width:  var(--width);
+    height: var(--width);
+    left: calc(50% - var(--width) / 2);
+    top: calc(var(--top) - var(--width ) / 2);
+
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-name: float;
+    animation-iteration-count: infinite;
+}
+
+.layer#top {
+    --top: 25%;
+    --rise: 5px;
+
+    background: red;
+}
+
+.layer#middle {
+    --top: 50%;
+    --rise: 10px;
+
+    background: green;
+}
+
+.layer#bottom {
+    --top: 75%;
+    --rise: 15px;
+
+    background: blue;
+}
+
+.layer.ball {
+    box-shadow: inset -25px -15px 40px rgba(0,0,0,.3);
+    background-image: linear-gradient(-45deg, rgba(255,255,220,.3) 0%, transparent 100%);
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0px);
+    }
+
+    50% {
+        transform: translate(0, var(--rise));
+    }
+
+    100% {
+        transform: translate(0, 0px);
+    }
+}
