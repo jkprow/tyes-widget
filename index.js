@@ -9,6 +9,28 @@ if (!window.AudioContext && window.webkitAudioContext) {
 }
 
 (async function() {
+  function makeReverb(seconds = 1, decay = 3) {
+    const reverb = ctx.createConvolver();
+    const rate = ctx.sampleRate;
+    const length = rate * seconds;
+    const impulse = ctx.createBuffer(2, length, rate);
+    const impulseL = impulse.getChannelData(0);
+    const impulseR = impulse.getChannelData(1);
+    
+    function getVerbSample(sample) {
+      return (Math.random() * 2 - 1) * Math.pow(1 - sample / length, decay);
+    }
+    
+    for (let i = 0; i < length; i++) {
+      impulseL[i] = getVerbSample(i);
+      impulseR[i] = getVerbSample(i);
+    }
+    
+    reverb.buffer = impulse;
+    
+    return reverb;
+  }
+  
   // Globals
   const S3_ROOT = 'https://s3.us-west-2.amazonaws.com/jkprow/';
   const FILES = ['beachboiz.wav', 'dnb.wav'];
@@ -26,30 +48,43 @@ if (!window.AudioContext && window.webkitAudioContext) {
     await ctx.resume();
   }
   
+  // Set up base audio graph
+  const dryGain = ctx.createGain();
+  dryGain.gain.value = 1;
+  dryGain.connect(ctx.destination);
+  
+  const wetGain = ctx.createGain();
+  wetGain.gain.value = 0;
+  wetGain.connect(ctx.destination);
+  
+  const reverb = makeReverb();
+  reverb.connect(wetGain);
+  
   // Fetch the loop files and set up their audio graph
-  const gainBufferPairs = await Promise.all(
-    await FILES.map(async loop => {
+  const loopNodes = await Promise.all(
+    await FILES.map(async (loop, idx) => {
       const response = await fetch(S3_ROOT + loop);
       const arrayBuffer = await response.arrayBuffer();
       const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-      const gainNode = ctx.createGain();
-      const bufferSourceNode = ctx.createBufferSource();
-      gainNode.gain.value = 0;
-      bufferSourceNode.buffer = audioBuffer;
-      bufferSourceNode.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      bufferSourceNode.loop = true;
+      const loopGain = ctx.createGain();
+      const loopBufferSource = ctx.createBufferSource();
+      loopGain.gain.value = 0;
+      loopBufferSource.buffer = audioBuffer;
+      loopBufferSource.connect(loopGain);
+      loopGain.connect(reverb);
+      loopGain.connect(dryGain);
+      loopBufferSource.loop = true;
       return {
-        gain: gainNode,
-        bufferSource: bufferSourceNode,
+        loopGain,
+        loopBufferSource,
       };
     })
   );
 
   // Once both loops are ready, kick them off
-  const gains = gainBufferPairs.map(({gain, bufferSource}) => {
-    bufferSource.start(0);
-    return gain;
+  const gains = loopNodes.map(({ loopGain, loopBufferSource }) => {
+    loopBufferSource.start(0);
+    return loopGain;
   });
   
   /**
@@ -72,7 +107,8 @@ if (!window.AudioContext && window.webkitAudioContext) {
   });
 
   middle.addEventListener('click', () => {
-    console.log('Layer 2');
+    toggleGain(wetGain);
+    toggleGain(dryGain);
   });
 
   bottom.addEventListener('click', () => {
