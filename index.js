@@ -62,11 +62,15 @@ treeLayer.connectAudio(mixerLayer);
 mixerLayer.connectAudio(audioContext.destination);
 
 (async function() {
-  await Promise.all([
-    await keyboardLayer.initAudio(),
-    await treeLayer.initAudio(),
-  ]);
+  try {
+    await Promise.all([
+      await keyboardLayer.initAudio(),
+      await treeLayer.initAudio(),
+    ]);
   
-  keyboardLayer.startAudio();
-  treeLayer.startAudio();
+    keyboardLayer.startAudio();
+    treeLayer.startAudio();
+  } catch (e) {
+    console.log('Could not start audio - Running without audio');
+  }
 })();
