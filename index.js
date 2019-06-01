@@ -5,7 +5,8 @@ import { BufferLayer, ReverbLayer } from './Layer.js';
 const S3_ROOT = 'https://s3.us-west-2.amazonaws.com/jkprow/';
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-audioContext.toggleGain = function toggleGain(gain) {
+audioContext.toggleGain = function toggleGain(gainNode) {
+  const { gain } = gainNode;
   gain.linearRampToValueAtTime(1 - gain.value, this.currentTime + 1);
 };
 

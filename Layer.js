@@ -43,6 +43,7 @@ export class BufferLayer extends Layer {
     this.loopBufferSource.loop = true;
     
     this.loopBufferSource.connect(this.loopGain);
+    
     this.registerToggleHook(() => this.toggleAudio());
   }
   
@@ -67,32 +68,30 @@ export class BufferLayer extends Layer {
   }
   
   toggleAudio() {
-    this.audioContext.toggleGain(this.loopGain.gain);
+    this.audioContext.toggleGain(this.loopGain);
   }
 }
 
 export class ReverbLayer extends Layer {
-  static getVerbSample(sample, decay) {
-    return (Math.random() * 2 - 1) * Math.pow(1 - sample / length, decay);
-  }
-  
   constructor(args) {
     super(args);
     
     this.audioContext = args.audioContext;
-
-    this.reverb = args.audioContext.createConvolver();
     const rate = args.audioContext.sampleRate;
-    const length = rate * args.seconds;
-    const impulse = args.audioContext.createBuffer(2, length, rate);
+  
+    this.reverb = args.audioContext.createConvolver();
+    this.decay = args.decay;
+    this.length = rate * args.seconds;
+    const impulse = args.audioContext.createBuffer(2, this.length, rate);
     const impulseL = impulse.getChannelData(0);
     const impulseR = impulse.getChannelData(1);
 
-    for (let i = 0; i < length; i++) {
-      impulseL[i] = ReverbLayer.getVerbSample(i, args.decay);
-      impulseR[i] = ReverbLayer.getVerbSample(i, args.decay);
+    for (let i = 0; i < this.length; i++) {
+      impulseL[i] = this.getVerbSample(i);
+      impulseR[i] = this.getVerbSample(i);
     }
-
+    
+    //console.log(impulse.getChannelData(0))
     this.reverb.buffer = impulse;
 
     // Set up dry and wet gains, and reverb
@@ -103,7 +102,13 @@ export class ReverbLayer extends Layer {
     this.wetGain.gain.value = 0;
 
     this.reverb.connect(this.wetGain);
-    this.registerToggleHook(this.toggleEffect);
+    
+    this.inputs = [this.reverb, this.dryGain];
+    this.registerToggleHook(() => this.toggleEffect());
+  }
+  
+  getVerbSample(sample) {
+    return (Math.random() * 2 - 1) * Math.pow(1 - sample / this.length, this.decay);
   }
   
   connectAudio(node) {
@@ -118,6 +123,6 @@ export class ReverbLayer extends Layer {
   
   toggleImage() {
     super.toggleImage();
-    setTimeout(() => this.toggleImage(), 1500);
+    setTimeout(() => super.toggleImage(), 1500);
   }
 }
