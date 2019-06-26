@@ -87,7 +87,6 @@ export class ReverbLayer extends Layer {
       impulseR[i] = this.getVerbSample(i);
     }
     
-    //console.log(impulse.getChannelData(0))
     this.reverb.buffer = impulse;
 
     // Set up dry and wet gains, and reverb
