@@ -114,6 +114,6 @@ export class ReverbLayer extends Layer {
   
   toggleImage() {
     super.toggleImage();
-    setTimeout(() => super.toggleImage(), 1500);
+    setTimeout(() => super.toggleImage(), 2000);
   }
 }

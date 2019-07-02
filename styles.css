@@ -5,13 +5,12 @@
 }
 
 .layer {
-    --width: 75%;
+    --width: 50%;
 
     touch-action: manipulation;
     position: absolute;
     object-fit: scale-down;
     width:  var(--width);
-    height: var(--width);
     left: calc(50% - var(--width) / 2);
     top: calc(var(--top) - var(--width ) / 2);
 

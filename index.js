@@ -15,7 +15,6 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
   node.isToggled = false;
   
   node.toggle = function toggle() {
-    console.log('toggling', this);
     const toGain = this.isToggled?
       this.startGain :
       this.endGain;
