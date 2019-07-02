@@ -5,9 +5,25 @@ import { BufferLayer, ReverbLayer } from './Layer.js';
 const S3_ROOT = 'https://s3.us-west-2.amazonaws.com/jkprow/';
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-audioContext.toggleGain = function toggleGain(gainNode) {
-  const { gain } = gainNode;
-  gain.linearRampToValueAtTime(1 - gain.value, this.currentTime + 1);
+audioContext.createRampingGainNode = function(startGain, endGain) {
+  const node = this.createGain();
+  
+  node.startGain = startGain;
+  node.endGain = endGain;
+  node.gain.value = startGain;
+  
+  node.isToggled = false;
+  
+  node.toggle = function toggle() {
+    console.log('toggling', this);
+    const toGain = this.isToggled?
+      this.startGain :
+      this.endGain;
+    this.gain.linearRampToValueAtTime(toGain, this.context.currentTime + 1);
+    this.isToggled = !this.isToggled;
+  };
+  
+  return node;
 };
 
 // Take user input to resume the AudioContext
@@ -37,7 +53,7 @@ const keyboardLayer = new BufferLayer({
 const mixerLayer = new ReverbLayer({
   audioContext,
   seconds: 1,
-  decay: 3,
+  decay: 0.5,
   id: 'middle',
   imageURLs: [
     'img/mixer/off.png',

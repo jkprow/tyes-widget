@@ -36,9 +36,8 @@ export class BufferLayer extends Layer {
     this.audioContext = args.audioContext;
     this.audioURL = args.audioURL;
     
-    this.loopGain = args.audioContext.createGain();
-    this.loopGain.gain.value = 0;
-
+    this.loopGain = args.audioContext.createRampingGainNode(0, 1);
+  
     this.loopBufferSource = args.audioContext.createBufferSource();
     this.loopBufferSource.loop = true;
     
@@ -64,7 +63,7 @@ export class BufferLayer extends Layer {
   }
   
   toggleAudio() {
-    this.audioContext.toggleGain(this.loopGain);
+    this.loopGain.toggle();
   }
 }
 
@@ -90,12 +89,9 @@ export class ReverbLayer extends Layer {
     this.reverb.buffer = impulse;
 
     // Set up dry and wet gains, and reverb
-    this.dryGain = args.audioContext.createGain();
-    this.dryGain.gain.value = 1;
-
-    this.wetGain = args.audioContext.createGain();
-    this.wetGain.gain.value = 0;
-
+    this.dryGain = args.audioContext.createRampingGainNode(1, 0.5);
+    this.wetGain = args.audioContext.createRampingGainNode(0, 0.5);
+  
     this.reverb.connect(this.wetGain);
     
     this.inputs = [this.reverb, this.dryGain];
@@ -112,8 +108,8 @@ export class ReverbLayer extends Layer {
   }
   
   toggleEffect() {
-    this.audioContext.toggleGain(this.wetGain);
-    this.audioContext.toggleGain(this.dryGain);
+    this.wetGain.toggle();
+    this.dryGain.toggle();
   };
   
   toggleImage() {
