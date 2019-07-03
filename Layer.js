@@ -1,12 +1,19 @@
 class Layer {
+  static audio1 = document.getElementById('click_audio_1');
+  static audio2 = document.getElementById('click_audio_2');
+  
   constructor(args) {
     this.el = document.getElementById(args.id);
-    this.el.addEventListener('click', () => this.toggle());
-
+    this.el.addEventListener('click', e => this.toggle(e));
+  
+    this.slider = document.getElementById(args.slider_id);
+    this.slider.addEventListener('input', e => this.onSlide(e));
+  
     this.imageURLs = args.imageURLs;
     this.imageSourceIndex = 0;
     this.toggleHooks = [];
-    
+    this.isToggled = false;
+  
     this.registerToggleHook(() => this.toggleImage());
   }
   
@@ -15,6 +22,8 @@ class Layer {
   }
   
   toggle() {
+    this.isToggled = !this.isToggled;
+    this.playClickAudio();
     this.toggleHooks.forEach(hook => hook());
   }
 
@@ -26,6 +35,18 @@ class Layer {
     }
   
     this.el.src = this.imageURLs[this.imageSourceIndex];
+  }
+  
+  playClickAudio() {
+    if (this.isToggled) {
+      Layer.audio1.play();
+      return;
+    }
+    Layer.audio2.play();
+  }
+  
+  onSlide() {
+    // Override me
   }
 }
 
@@ -64,6 +85,11 @@ export class BufferLayer extends Layer {
   
   toggleAudio() {
     this.loopGain.toggle();
+  }
+  
+  onSlide(e) {
+    const newGain = e.target.value / 100;
+    this.loopGain.setValue(newGain);
   }
 }
 
@@ -115,5 +141,11 @@ export class ReverbLayer extends Layer {
   toggleImage() {
     super.toggleImage();
     setTimeout(() => super.toggleImage(), 2000);
+  }
+  
+  onSlide(e) {
+    const newGain = e.target.value / 100;
+    this.dryGain.setValue(1 - newGain);
+    this.wetGain.setValue(newGain);
   }
 }

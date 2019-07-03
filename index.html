@@ -8,7 +8,14 @@
             <img id="top" class="layer" src="img/piano/off.png" />
             <img id="middle" class="layer" src="img/mixer/off.png" />
             <img id="bottom" class="layer" src="img/trees/off.png" />
+            <div class="sliders">
+                <input id="top_slider" class="slider" type="range" min="0" max="100" value="100"/>
+                <input id="middle_slider" class="slider" type="range" min="0" max="100" value="50"/>
+                <input id="bottom_slider" class="slider" type="range" min="0" max="100" value="100"/>
+            </div>
         </div>
     </body>
     <script type="module" src="index.js"></script>
+    <audio id="click_audio_1" src="audio/UI_1.wav" />
+    <audio id="click_audio_2" src="audio/UI_2.wav" />
 </html>

@@ -22,6 +22,13 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
     this.isToggled = !this.isToggled;
   };
   
+  node.setValue = function setValue(v) {
+    if (this.isToggled) {
+      this.gain.value = v;
+    }
+    this.endGain = v;
+  };
+  
   return node;
 };
 
@@ -42,6 +49,7 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
 const keyboardLayer = new BufferLayer({
   audioContext,
   id: 'top',
+  slider_id: 'top_slider',
   audioURL: S3_ROOT + 'beachboiz.wav',
   imageURLs: [
     'img/piano/off.png',
@@ -54,6 +62,7 @@ const mixerLayer = new ReverbLayer({
   seconds: 1,
   decay: 0.5,
   id: 'middle',
+  slider_id: 'middle_slider',
   imageURLs: [
     'img/mixer/off.png',
     'img/mixer/toOn.gif',
@@ -65,6 +74,7 @@ const mixerLayer = new ReverbLayer({
 const treeLayer = new BufferLayer({
   audioContext,
   id: 'bottom',
+  slider_id: 'bottom_slider',
   audioURL: S3_ROOT + 'dnb.wav',
   imageURLs: [
     'img/trees/off.png',
