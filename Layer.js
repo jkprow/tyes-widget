@@ -10,7 +10,7 @@ class Layer {
     this.layer = layer;
   
     const slider = document.createElement('input');
-    slider.id = args.slider_id;
+    slider.id = `${args.id}_slider`;
     slider.type = 'range';
     slider.min = '0';
     slider.max = '100';

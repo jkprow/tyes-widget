@@ -76,7 +76,6 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
 
 const keysLayer = new BufferLayer(audioContext, main,{
   id: 'top',
-  slider_id: 'top_slider',
   audioURL: ASSETS.AUDIO_KEYS,
   imageURLs: [
     ASSETS.IMAGE_KEYS_OFF,
@@ -90,7 +89,6 @@ const mixerLayer = new ReverbLayer(audioContext, main,{
   seconds: 1,
   decay: 0.5,
   id: 'middle',
-  slider_id: 'middle_slider',
   imageURLs: [
     ASSETS.IMAGE_MIXER_OFF,
     ASSETS.IMAGE_MIXER_TO_ON,
@@ -103,7 +101,6 @@ const mixerLayer = new ReverbLayer(audioContext, main,{
 
 const treeLayer = new BufferLayer(audioContext, main,{
   id: 'bottom',
-  slider_id: 'bottom_slider',
   audioURL: ASSETS.AUDIO_TREES,
   imageURLs: [
     ASSETS.IMAGE_TREES_OFF,
