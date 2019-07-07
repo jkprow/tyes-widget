@@ -24,7 +24,7 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
   
   node.setValue = function setValue(v) {
     if (this.isToggled) {
-      this.gain.value = v;
+      this.gain.setValueAtTime(v, this.context.currentTime);
     }
     this.endGain = v;
   };

@@ -1,7 +1,7 @@
+const audio1 = document.getElementById('click_audio_1');
+const audio2 = document.getElementById('click_audio_2');
+
 class Layer {
-  static audio1 = document.getElementById('click_audio_1');
-  static audio2 = document.getElementById('click_audio_2');
-  
   constructor(args) {
     this.el = document.getElementById(args.id);
     this.el.addEventListener('click', e => this.toggle(e));
@@ -21,9 +21,9 @@ class Layer {
     this.toggleHooks.push(hook);
   }
   
-  toggle() {
+  toggle(e) {
     this.isToggled = !this.isToggled;
-    this.playClickAudio();
+    this.playClickAudio(e);
     this.toggleHooks.forEach(hook => hook());
   }
 
@@ -37,12 +37,12 @@ class Layer {
     this.el.src = this.imageURLs[this.imageSourceIndex];
   }
   
-  playClickAudio() {
+  playClickAudio(e) {
     if (this.isToggled) {
-      Layer.audio1.play();
+      audio1.play();
       return;
     }
-    Layer.audio2.play();
+    audio2.play();
   }
   
   onSlide() {
@@ -88,7 +88,7 @@ export class BufferLayer extends Layer {
   }
   
   onSlide(e) {
-    const newGain = e.target.value / 100;
+    const newGain = parseInt(e.target.value) / 100;
     this.loopGain.setValue(newGain);
   }
 }
