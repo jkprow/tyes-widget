@@ -1,4 +1,3 @@
-// make safari happy
 import './polyfills.js';
 import { BufferLayer, ReverbLayer } from './Layer.js';
 
@@ -20,7 +19,16 @@ const ASSETS = {
   
   IMAGE_TREES_OFF: BASE_URL + 'assets/trees_off.png',
   IMAGE_TREES_ON: BASE_URL + 'assets/trees_on.gif',
+  
+  STYLESHEET: BASE_URL + 'assets/styles.css',
 };
+
+const head = document.getElementsByTagName('HEAD')[0];
+const link = document.createElement('link');
+link.rel = 'stylesheets';
+link.type = 'text/css';
+link.href = ASSETS.STYLESHEET;
+head.appendChild(link);
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const main = document.getElementById('animation-main');
