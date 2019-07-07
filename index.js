@@ -2,8 +2,36 @@
 import './polyfills.js';
 import { BufferLayer, ReverbLayer } from './Layer.js';
 
-const S3_ROOT = 'https://s3.us-west-2.amazonaws.com/jkprow/';
+const ASSETS = {
+  AUDIO_CLICK_ON: 'audio/UI_1.wav',
+  AUDIO_CLICK_OFF: 'audio/UI_2.wav',
+  
+  AUDIO_KEYS: 'https://s3.us-west-2.amazonaws.com/jkprow/beachboiz.wav',
+  AUDIO_TREES: 'https://s3.us-west-2.amazonaws.com/jkprow/dnb.wav',
+  
+  IMAGE_KEYS_OFF: 'img/piano/off.png',
+  IMAGE_KEYS_ON: 'img/piano/on.gif',
+  
+  IMAGE_MIXER_OFF: 'img/mixer/off.png',
+  IMAGE_MIXER_TO_ON: 'img/mixer/toOn.gif',
+  IMAGE_MIXER_ON: 'img/mixer/on.png',
+  IMAGE_MIXER_TO_OFF: 'img/mixer/toOff.png',
+  
+  IMAGE_TREES_OFF: 'img/trees/off.png',
+  IMAGE_TREES_ON: 'img/trees/on.gif',
+};
+
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const main = document.getElementById('animation-main');
+
+const clickOn = document.createElement('audio');
+clickOn.src = ASSETS.AUDIO_CLICK_ON;
+main.appendChild(clickOn);
+
+const clickOff = document.createElement('audio');
+clickOff.src = ASSETS.AUDIO_CLICK_OFF;
+main.appendChild(clickOff);
+
 
 audioContext.createRampingGainNode = function(startGain, endGain) {
   const node = this.createGain();
@@ -46,54 +74,57 @@ audioContext.createRampingGainNode = function(startGain, endGain) {
   }
 })();
 
-const keyboardLayer = new BufferLayer({
-  audioContext,
+const keysLayer = new BufferLayer(audioContext, main,{
   id: 'top',
   slider_id: 'top_slider',
-  audioURL: S3_ROOT + 'beachboiz.wav',
+  audioURL: ASSETS.AUDIO_KEYS,
   imageURLs: [
-    'img/piano/off.png',
-    'img/piano/on.gif',
+    ASSETS.IMAGE_KEYS_OFF,
+    ASSETS.IMAGE_KEYS_ON,
   ],
+  clickOn,
+  clickOff,
 });
 
-const mixerLayer = new ReverbLayer({
-  audioContext,
+const mixerLayer = new ReverbLayer(audioContext, main,{
   seconds: 1,
   decay: 0.5,
   id: 'middle',
   slider_id: 'middle_slider',
   imageURLs: [
-    'img/mixer/off.png',
-    'img/mixer/toOn.gif',
-    'img/mixer/on.png',
-    'img/mixer/toOff.gif',
+    ASSETS.IMAGE_MIXER_OFF,
+    ASSETS.IMAGE_MIXER_TO_ON,
+    ASSETS.IMAGE_MIXER_ON,
+    ASSETS.IMAGE_MIXER_TO_OFF,
   ],
+  clickOn,
+  clickOff,
 });
 
-const treeLayer = new BufferLayer({
-  audioContext,
+const treeLayer = new BufferLayer(audioContext, main,{
   id: 'bottom',
   slider_id: 'bottom_slider',
-  audioURL: S3_ROOT + 'dnb.wav',
+  audioURL: ASSETS.AUDIO_TREES,
   imageURLs: [
-    'img/trees/off.png',
-    'img/trees/on.gif',
+    ASSETS.IMAGE_TREES_OFF,
+    ASSETS.IMAGE_TREES_ON,
   ],
+  clickOn,
+  clickOff,
 });
 
-keyboardLayer.connectAudio(mixerLayer);
+keysLayer.connectAudio(mixerLayer);
 treeLayer.connectAudio(mixerLayer);
 mixerLayer.connectAudio(audioContext.destination);
 
 (async function() {
   try {
     await Promise.all([
-      await keyboardLayer.initAudio(),
+      await keysLayer.initAudio(),
       await treeLayer.initAudio(),
     ]);
   
-    keyboardLayer.startAudio();
+    keysLayer.startAudio();
     treeLayer.startAudio();
   } catch (e) {
     console.log('Could not start audio - Running without audio');

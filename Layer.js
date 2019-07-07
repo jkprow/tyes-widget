@@ -1,13 +1,27 @@
-const audio1 = document.getElementById('click_audio_1');
-const audio2 = document.getElementById('click_audio_2');
-
 class Layer {
-  constructor(args) {
-    this.el = document.getElementById(args.id);
-    this.el.addEventListener('click', e => this.toggle(e));
+  constructor(main, args) {
+    const layer = document.createElement('img');
+    layer.id = args.id;
+    layer.classList.add('layer');
+    layer.src = args.imageURLs[0];
+    layer.addEventListener('click', e => this.toggle(e));
+    main.appendChild(layer);
+    
+    this.layer = layer;
   
-    this.slider = document.getElementById(args.slider_id);
-    this.slider.addEventListener('input', e => this.onSlide(e));
+    const slider = document.createElement('input');
+    slider.id = args.slider_id;
+    slider.type = 'range';
+    slider.min = '0';
+    slider.max = '100';
+    slider.classList.add('slider');
+    slider.addEventListener('input', e => this.onSlide(e));
+    main.appendChild(slider);
+    
+    this.slider = slider;
+    
+    this.clickOn = args.clickOn;
+    this.clickOff = args.clickOff;
   
     this.imageURLs = args.imageURLs;
     this.imageSourceIndex = 0;
@@ -34,15 +48,15 @@ class Layer {
       this.imageSourceIndex++;
     }
   
-    this.el.src = this.imageURLs[this.imageSourceIndex];
+    this.layer.src = this.imageURLs[this.imageSourceIndex];
   }
   
   playClickAudio(e) {
     if (this.isToggled) {
-      audio1.play();
+      this.clickOff.play();
       return;
     }
-    audio2.play();
+    this.clickOn.play();
   }
   
   onSlide() {
@@ -51,20 +65,22 @@ class Layer {
 }
 
 export class BufferLayer extends Layer {
-  constructor(args) {
-    super(args);
+  constructor(audioContext, main, args) {
+    super(main, args);
     
-    this.audioContext = args.audioContext;
+    this.audioContext = audioContext;
     this.audioURL = args.audioURL;
     
-    this.loopGain = args.audioContext.createRampingGainNode(0, 1);
+    this.loopGain = audioContext.createRampingGainNode(0, 1);
   
-    this.loopBufferSource = args.audioContext.createBufferSource();
+    this.loopBufferSource = audioContext.createBufferSource();
     this.loopBufferSource.loop = true;
     
     this.loopBufferSource.connect(this.loopGain);
     
     this.registerToggleHook(() => this.toggleAudio());
+    
+    this.slider.value = '100';
   }
   
   async initAudio() {
@@ -94,16 +110,15 @@ export class BufferLayer extends Layer {
 }
 
 export class ReverbLayer extends Layer {
-  constructor(args) {
-    super(args);
+  constructor(audioContext, main, args) {
+    super(main, args);
     
-    this.audioContext = args.audioContext;
-    const rate = args.audioContext.sampleRate;
+    const rate = audioContext.sampleRate;
   
-    this.reverb = args.audioContext.createConvolver();
+    this.reverb = audioContext.createConvolver();
     this.decay = args.decay;
     this.length = rate * args.seconds;
-    const impulse = args.audioContext.createBuffer(2, this.length, rate);
+    const impulse = audioContext.createBuffer(2, this.length, rate);
     const impulseL = impulse.getChannelData(0);
     const impulseR = impulse.getChannelData(1);
 
@@ -115,13 +130,15 @@ export class ReverbLayer extends Layer {
     this.reverb.buffer = impulse;
 
     // Set up dry and wet gains, and reverb
-    this.dryGain = args.audioContext.createRampingGainNode(1, 0.5);
-    this.wetGain = args.audioContext.createRampingGainNode(0, 0.5);
+    this.dryGain = audioContext.createRampingGainNode(1, 0.5);
+    this.wetGain = audioContext.createRampingGainNode(0, 0.5);
   
     this.reverb.connect(this.wetGain);
     
     this.inputs = [this.reverb, this.dryGain];
     this.registerToggleHook(() => this.toggleEffect());
+    
+    this.slider.value = '50';
   }
   
   getVerbSample(sample) {
