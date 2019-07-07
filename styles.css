@@ -10,7 +10,7 @@
     touch-action: manipulation;
     position: absolute;
     object-fit: scale-down;
-    width:  var(--width);
+    width: var(--width);
     left: calc(50% - var(--width) / 2);
     top: calc(var(--top) - var(--width ) / 2);
 

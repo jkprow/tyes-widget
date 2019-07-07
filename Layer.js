@@ -85,8 +85,20 @@ export class BufferLayer extends Layer {
   
   async initAudio() {
     const response = await fetch(this.audioURL);
-    const arrayBuffer = await response.arrayBuffer();
-    this.loopBufferSource.buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+    let arrayBuffer;
+    try {
+      arrayBuffer = await response.arrayBuffer();
+    } catch (e) {
+      console.log('buffer', e);
+    }
+    
+    console.log(arrayBuffer);
+    
+    try {
+      this.loopBufferSource.buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+    } catch (e) {
+      console.log('error decoding', e)
+    }
   }
   
   connectAudio(layer) {

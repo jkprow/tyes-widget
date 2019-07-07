@@ -2,23 +2,24 @@
 import './polyfills.js';
 import { BufferLayer, ReverbLayer } from './Layer.js';
 
+const BASE_URL = 'https://tyehastings.s3-us-west-2.amazonaws.com/';
 const ASSETS = {
-  AUDIO_CLICK_ON: 'audio/UI_1.wav',
-  AUDIO_CLICK_OFF: 'audio/UI_2.wav',
+  AUDIO_CLICK_ON: BASE_URL + 'assets/click_off.wav',
+  AUDIO_CLICK_OFF: BASE_URL + 'assets/click_on.wav',
   
-  AUDIO_KEYS: 'https://s3.us-west-2.amazonaws.com/jkprow/beachboiz.wav',
-  AUDIO_TREES: 'https://s3.us-west-2.amazonaws.com/jkprow/dnb.wav',
+  AUDIO_KEYS: BASE_URL + 'assets/keys.wav',
+  AUDIO_TREES: BASE_URL + 'assets/trees.wav',
   
-  IMAGE_KEYS_OFF: 'img/piano/off.png',
-  IMAGE_KEYS_ON: 'img/piano/on.gif',
+  IMAGE_KEYS_OFF: BASE_URL + 'assets/keys_off.png',
+  IMAGE_KEYS_ON: BASE_URL + 'assets/keys_on.gif',
   
-  IMAGE_MIXER_OFF: 'img/mixer/off.png',
-  IMAGE_MIXER_TO_ON: 'img/mixer/toOn.gif',
-  IMAGE_MIXER_ON: 'img/mixer/on.png',
-  IMAGE_MIXER_TO_OFF: 'img/mixer/toOff.gif',
+  IMAGE_MIXER_OFF: BASE_URL + 'assets/mixer_off.png',
+  IMAGE_MIXER_TO_ON: BASE_URL + 'assets/mixer_to_on.gif',
+  IMAGE_MIXER_ON: BASE_URL + 'assets/mixer_off.png',
+  IMAGE_MIXER_TO_OFF: BASE_URL + 'assets/mixer_to_off.gif',
   
-  IMAGE_TREES_OFF: 'img/trees/off.png',
-  IMAGE_TREES_ON: 'img/trees/on.gif',
+  IMAGE_TREES_OFF: BASE_URL + 'assets/trees_off.png',
+  IMAGE_TREES_ON: BASE_URL + 'assets/trees_on.gif',
 };
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
