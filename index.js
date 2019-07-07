@@ -15,7 +15,7 @@ const ASSETS = {
   IMAGE_MIXER_OFF: 'img/mixer/off.png',
   IMAGE_MIXER_TO_ON: 'img/mixer/toOn.gif',
   IMAGE_MIXER_ON: 'img/mixer/on.png',
-  IMAGE_MIXER_TO_OFF: 'img/mixer/toOff.png',
+  IMAGE_MIXER_TO_OFF: 'img/mixer/toOff.gif',
   
   IMAGE_TREES_OFF: 'img/trees/off.png',
   IMAGE_TREES_ON: 'img/trees/on.gif',
