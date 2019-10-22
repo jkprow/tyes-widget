@@ -14,7 +14,7 @@ const ASSETS = {
   
   IMAGE_MIXER_OFF: BASE_URL + 'assets/mixer_off.png',
   IMAGE_MIXER_TO_ON: BASE_URL + 'assets/mixer_to_on.gif',
-  IMAGE_MIXER_ON: BASE_URL + 'assets/mixer_off.png',
+  IMAGE_MIXER_ON: BASE_URL + 'assets/mixer_on.png',
   IMAGE_MIXER_TO_OFF: BASE_URL + 'assets/mixer_to_off.gif',
   
   IMAGE_TREES_OFF: BASE_URL + 'assets/trees_off.png',
@@ -25,7 +25,7 @@ const ASSETS = {
 
 const head = document.getElementsByTagName('HEAD')[0];
 const link = document.createElement('link');
-link.rel = 'stylesheets';
+link.rel = 'stylesheet';
 link.type = 'text/css';
 link.href = ASSETS.STYLESHEET;
 head.appendChild(link);
